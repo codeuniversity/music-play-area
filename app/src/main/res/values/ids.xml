@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="action_settings" type="id">100</item>
+    <item name="axis_x" type="id">axis_x_view_id</item>
+    <item name="axis_y" type="id">axis_y_view_id</item>
+    <item name="axis_z" type="id">axis_z_view_id</item>
+    <item name="console" type="id">console_view_id</item>
+</resources>
