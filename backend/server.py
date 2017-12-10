@@ -3,7 +3,6 @@ from autobahn.twisted.websocket import WebSocketServerProtocol, \
 from twisted.internet import reactor
 from twisted.python import log
 from subprocess import Popen
-from daemon import Daemon
 import threading
 import random
 import time
@@ -14,12 +13,16 @@ import os
 
 
 class SoundClient(object):
-    devnull = open(os.devnull, 'w')
-    tones_folder = 'tones/'
-    tones = ['piano1', 'piano2', 'piano3', 'piano4', 'piano5', 'piano6', ]
+    """
+    This class creates a thread to play an audio file every 'interval_seconds'.
+    By executing 'adjustSound' you can alter the melody that is being played.
+    """
 
-    def __init__(self):
-        self.tone = 'piano'
+    devnull = open(os.devnull, 'w')  # used to discard the output from Popen
+    tones_folder = 'tones/'
+
+    def __init__(self, instrument):
+        self.instrument = instrument
         self.melody = 1
         self.interval_seconds = 1
 
@@ -42,7 +45,7 @@ class SoundClient(object):
 
     def playSound(self):
         Popen(['mpg123', '{}{}{}.mp3'.format(self.tones_folder, 
-                                             self.tone, 
+                                             self.instrument, 
                                              self.melody)], 
               stderr=SoundClient.devnull)
 
@@ -61,7 +64,7 @@ class MyServerProtocol(WebSocketServerProtocol):
     def onConnect(self, request):
         # if this is a new client, create a SoundClient instance to store it
         if self.clients.get(request.peer) is None:
-            self.clients[request.peer] = SoundClient()
+            self.clients[request.peer] = SoundClient('piano')
             self.clients[request.peer].start()
             
         print("Client connecting: {}".format(request.peer))
