@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -45,6 +46,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     private static final String TAG = "wsclient";
     private WebSocketConnection mConnection;
+    private int mFreq = 3;
 
     private void start() {
 
@@ -93,19 +95,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE && mLastAccelerometerSet && mLastMagnetometerSet) {
-
-            TextView axisXtextbox = (TextView) this.findViewById(R.id.axis_x);
-            TextView axisYtextbox = (TextView) this.findViewById(R.id.axis_y);
-            TextView axisZtextbox = (TextView) this.findViewById(R.id.axis_z);
-            TextView console = (TextView) this.findViewById(R.id.console);
-
             float axisX = event.values[0];
             float axisY = event.values[1];
             float axisZ = event.values[2];
-
-            axisXtextbox.setText(String.valueOf(mOrientation[0]));
-            axisYtextbox.setText(String.valueOf(mOrientation[1]));
-            axisZtextbox.setText(String.valueOf(mOrientation[2]));
 
             long millisec = 100; // Expect messages to be sent in every "millisec" interval
 
@@ -115,14 +107,23 @@ public class MainActivity extends Activity implements SensorEventListener {
 
             if ((event.timestamp - lastSendTime) > (100*millisec) && mConnection != null && mConnection.isConnected()) {
                 try {
-                    this.mConnection.sendTextMessage(String.format("{ \"axis_x\": \"%f\", \"axis_y\": \"%f\", \"axis_z\": \"%f\", \"orientation_x\": \"%f\", \"orientation_y\": \"%f\", \"orientation_z\": \"%f\"  }",
-                            axisX, axisY, axisZ, mOrientation[0], mOrientation[1], mOrientation[2]));
+                    this.mConnection.sendTextMessage(String.format(
+                            "{ " +
+                                    "\"instrument_id\": \"%d\", " +
+                                    "\"freq\": \"%d\", " +
+                                    "\"axis_x\": \"%f\", " +
+                                    "\"axis_y\": \"%f\", " +
+                                    "\"axis_z\": \"%f\", " +
+                                    "\"orientation_x\": \"%f\", " +
+                                    "\"orientation_y\": \"%f\", " +
+                                    "\"orientation_z\": \"%f\"  " +
+                            "}",
+                            1, mFreq, axisX, axisY, axisZ, mOrientation[0], mOrientation[1], mOrientation[2]));
                 }
                 catch (Exception err) {
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     err.printStackTrace(pw);
-                    console.setText("SendMessage Ex: " + event.timestamp + ", " + err.getClass().toString() + ", " + sw.toString());
                 }
 
                 lastSendTime = event.timestamp;
@@ -199,22 +200,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            mConnection = null;
-            this.start();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
@@ -245,5 +230,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void onAccuracyChanged(Sensor arg0, int arg1) {
         // TODO Auto-generated method stub
 
+    }
+
+    public void setFreqUp(View view) {
+        mFreq++;
+    }
+
+    public void setFreqDown(View view) {
+        if (mFreq > 1)
+        mFreq--;
     }
 }

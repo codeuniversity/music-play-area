@@ -4,4 +4,7 @@
     <string name="enable_nfc_msg">NFC needs to be turned on for this app to run. Please enable NFC now.</string>
     <string name="nfc_settings">Enable</string>
     <string name="close">Close</string>
+    <string name="button_text">Freq Up</string>
+    <string name="button_text_freq_up">Freq Up</string>
+    <string name="button_text_freq_down">Freq Down</string>
 </resources>

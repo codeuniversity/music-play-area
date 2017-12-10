@@ -24,13 +24,14 @@ class SoundClient(object):
     def __init__(self):
         self.instrument = None
         self.melody = None
-        self.interval_seconds = 1
+        self.interval_seconds = 0.3
 
     def adjustSound(self, data_str):
         json_data = json.loads(data_str)
         orientation_y = float(json_data['orientation_y'])
         self.instrument = SoundClient.instruments[int(json_data['instrument_id'])]
-        print(self.instrument)
+        self.interval_seconds = 0.3 * int(json_data['freq'])
+        print(self.interval_seconds)
 
         if orientation_y > 0.3 and orientation_y < 0.6:
             self.melody = 1
@@ -46,18 +47,22 @@ class SoundClient(object):
             self.melody = 6
 
     def playSound(self):
-        if  self.instrument is None or self.melody is None:
-            print(self.instrument, self.melody)
+        #pdb.set_trace()
+        if self.instrument is None or self.melody is None or self.interval_seconds is None:
             # wait for the instrument and melody to be selected before playing
+            print(self.instrument, self.melody, self.interval_seconds)
             return
 
+        print(self.instrument, self.melody, self.interval_seconds)
         Popen(['mpg123', '{}{}{}.mp3'.format(self.tones_folder, 
                                              self.instrument, 
                                              self.melody)], 
               stderr=SoundClient.devnull)
 
     def start(self):
+        #pdb.set_trace()
         self.playSound()
+        #pdb.set_trace()
         t = threading.Timer(self.interval_seconds, self.start)
         t.setDaemon(True)
         t.start()
