@@ -17,7 +17,6 @@ class SoundClient(object):
     This class creates a thread to play an audio file every 'interval_seconds'.
     By executing 'adjustSound' you can alter the melody that is being played.
     """
-
     devnull = open(os.devnull, 'w')  # used to discard the output from Popen
     tones_folder = 'tones/'
 
@@ -64,7 +63,7 @@ class MyServerProtocol(WebSocketServerProtocol):
     def onConnect(self, request):
         # if this is a new client, create a SoundClient instance to store it
         if self.clients.get(request.peer) is None:
-            self.clients[request.peer] = SoundClient('piano')
+            self.clients[request.peer] = SoundClient('guitar')
             self.clients[request.peer].start()
             
         print("Client connecting: {}".format(request.peer))
