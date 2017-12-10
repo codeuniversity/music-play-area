@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WebSocketClient</string>
+    <string name="enable_nfc_title">Enable NFC</string>
+    <string name="enable_nfc_msg">NFC needs to be turned on for this app to run. Please enable NFC now.</string>
+    <string name="nfc_settings">Enable</string>
+    <string name="close">Close</string>
 </resources>
