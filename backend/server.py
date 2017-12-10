@@ -19,15 +19,18 @@ class SoundClient(object):
     """
     devnull = open(os.devnull, 'w')  # used to discard the output from Popen
     tones_folder = 'tones/'
+    instruments = ['piano', 'guitar', 'drum']
 
-    def __init__(self, instrument):
-        self.instrument = instrument
-        self.melody = 1
+    def __init__(self):
+        self.instrument = None
+        self.melody = None
         self.interval_seconds = 1
 
     def adjustSound(self, data_str):
         json_data = json.loads(data_str)
         orientation_y = float(json_data['orientation_y'])
+        self.instrument = SoundClient.instruments[int(json_data['instrument_id'])]
+        print(self.instrument)
 
         if orientation_y > 0.3 and orientation_y < 0.6:
             self.melody = 1
@@ -43,6 +46,11 @@ class SoundClient(object):
             self.melody = 6
 
     def playSound(self):
+        if  self.instrument is None or self.melody is None:
+            print(self.instrument, self.melody)
+            # wait for the instrument and melody to be selected before playing
+            return
+
         Popen(['mpg123', '{}{}{}.mp3'.format(self.tones_folder, 
                                              self.instrument, 
                                              self.melody)], 
@@ -63,7 +71,7 @@ class MyServerProtocol(WebSocketServerProtocol):
     def onConnect(self, request):
         # if this is a new client, create a SoundClient instance to store it
         if self.clients.get(request.peer) is None:
-            self.clients[request.peer] = SoundClient('guitar')
+            self.clients[request.peer] = SoundClient()
             self.clients[request.peer].start()
             
         print("Client connecting: {}".format(request.peer))
