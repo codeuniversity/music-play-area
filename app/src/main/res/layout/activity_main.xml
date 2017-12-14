@@ -6,26 +6,84 @@
     android:layout_height="match_parent"
     tools:context="com.projects.piero.websocketclient.MainActivity">
 
+    <ImageView
+        android:layout_width="383dp"
+        android:layout_height="438dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="56dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/background_image"
+        android:src="@drawable/melody1_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageButton
+        android:layout_width="136dp"
+        android:layout_height="98dp"
+        android:layout_marginStart="244dp"
+        android:layout_marginTop="268dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:onClick="setMelody"
+        android:scaleType="fitCenter"
+        android:src="@null"
+        android:tag="0"
+        android:text="@string/button_melody2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:layout_width="149dp"
+        android:layout_height="135dp"
+        android:layout_marginStart="116dp"
+        android:layout_marginTop="360dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:onClick="setMelody"
+        android:scaleType="fitCenter"
+        android:src="@null"
+        android:tag="1"
+        android:text="@string/button_melody3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/melody4_icon_id"
+        android:layout_width="144dp"
+        android:layout_height="98dp"
+        android:layout_marginTop="268dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:onClick="setMelody"
+        android:scaleType="fitCenter"
+        android:src="@null"
+        android:tag="2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="392dp"
-        android:text="@string/button_text_freq_up"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:onClick="setFreqUp" />
-        <!--android:drawableLeft="@drawable/button_icon" />-->
-
-    <Button
-        android:layout_width="102dp"
-        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="140dp"
-        android:text="@string/button_text_freq_down"
+        android:layout_marginTop="444dp"
+        android:onClick="setFreqUp"
+        android:text="@string/button_text_freq_up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:onClick="setFreqDown" />
-    <!--android:drawableLeft="@drawable/button_icon" />-->
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="92dp"
+        android:onClick="setFreqDown"
+        android:text="@string/button_text_freq_down"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

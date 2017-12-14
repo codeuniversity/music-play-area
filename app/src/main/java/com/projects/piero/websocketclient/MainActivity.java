@@ -7,31 +7,27 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageView;
+
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
 
-
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sm;
     private long lastSendTime;
+    private long lastSendTime2;
 
     private Sensor mAccelerometer;
     private Sensor mMagnetometer;
@@ -47,10 +43,20 @@ public class MainActivity extends Activity implements SensorEventListener {
     private static final String TAG = "wsclient";
     private WebSocketConnection mConnection;
     private int mFreq = 3;
+    private int mInstrumentId = 0;
+    private int mMelodyId = 3;
+    private int[] melody1 = {R.drawable.melody1_1, R.drawable.melody1_2, R.drawable.melody1_3, R.drawable.melody1_4, R.drawable.melody1_5, R.drawable.melody1_6};
+    private int[] melody2 = {R.drawable.melody2_1, R.drawable.melody2_2, R.drawable.melody2_3, R.drawable.melody2_4, R.drawable.melody2_5, R.drawable.melody2_6};
+    private int[] melody3 = {R.drawable.melody3_1, R.drawable.melody3_2, R.drawable.melody3_3, R.drawable.melody3_4, R.drawable.melody3_5, R.drawable.melody3_6};
+    private int[][] melodies = {melody1, melody2, melody3};
+
+    private ImageView mBackgroundImage;
 
     private void start() {
 
-        final String wsuri = "ws://10.0.2.2:9000";
+        // final String wsuri = "ws://192.168.2.102:9000";
+        // final String wsuri = "ws://10.0.2.2:9000";
+        final String wsuri = "ws://10.42.0.1:9000";
 
         try {
             mConnection = new WebSocketConnection();
@@ -105,6 +111,10 @@ public class MainActivity extends Activity implements SensorEventListener {
                 lastSendTime = event.timestamp;
             }
 
+            if (lastSendTime2 == 0) {
+                lastSendTime2 = event.timestamp;
+            }
+
             if ((event.timestamp - lastSendTime) > (100*millisec) && mConnection != null && mConnection.isConnected()) {
                 try {
                     this.mConnection.sendTextMessage(String.format(
@@ -118,7 +128,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                                     "\"orientation_y\": \"%f\", " +
                                     "\"orientation_z\": \"%f\"  " +
                             "}",
-                            1, mFreq, axisX, axisY, axisZ, mOrientation[0], mOrientation[1], mOrientation[2]));
+                            mInstrumentId, mFreq, axisX, axisY, axisZ, mOrientation[0], mOrientation[1], mOrientation[2]));
                 }
                 catch (Exception err) {
                     StringWriter sw = new StringWriter();
@@ -128,16 +138,42 @@ public class MainActivity extends Activity implements SensorEventListener {
 
                 lastSendTime = event.timestamp;
             }
+
+            if (event.timestamp - lastSendTime2 > 1000*millisec) {
+                Log.d(TAG, Float.toString(mOrientation[1]));
+                if (0.3 < mOrientation[1] && mOrientation[1] < 0.6) {
+                    mBackgroundImage.setImageResource(melodies[mInstrumentId][5]);
+                }
+                if (0.0 < mOrientation[1] && mOrientation[1] < 0.3) {
+                    mBackgroundImage.setImageResource(melodies[mInstrumentId][4]);
+                }
+                if (-0.3 < mOrientation[1] && mOrientation[1] < -0.0) {
+                    mBackgroundImage.setImageResource(melodies[mInstrumentId][3]);
+                }
+                if (-0.6 < mOrientation[1] && mOrientation[1] < -0.3) {
+                    mBackgroundImage.setImageResource(melodies[mInstrumentId][2]);
+                }
+                if (-0.9 < mOrientation[1] && mOrientation[1] < -0.6) {
+                    mBackgroundImage.setImageResource(melodies[mInstrumentId][1]);
+                }
+                if (-1.2 < mOrientation[1] && mOrientation[1] < -0.9) {
+                    mBackgroundImage.setImageResource(melodies[mInstrumentId][0]);
+                }
+
+                lastSendTime2 = event.timestamp;
+            }
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d(TAG, "NFC Read.");
         Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         processNfcTag(tag);
     }
 
     private void processNfcTag(Tag tag) {
+        Log.d(TAG, "processNfcTag");
         if (tag != null) {
             Log.d(TAG, new String(tag.getId()));
         }
@@ -173,6 +209,8 @@ public class MainActivity extends Activity implements SensorEventListener {
             Log.d(TAG, "NFC disabled.");
             showAlertDialog();
         }
+
+        mBackgroundImage = (ImageView) findViewById(R.id.background_image);
     }
 
     private void showAlertDialog() {
@@ -212,7 +250,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         mLastMagnetometerSet = false;
         sm.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         sm.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
-
     }
 
     @Override
@@ -229,7 +266,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor arg0, int arg1) {
         // TODO Auto-generated method stub
-
     }
 
     public void setFreqUp(View view) {
@@ -239,5 +275,10 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void setFreqDown(View view) {
         if (mFreq > 1)
         mFreq--;
+    }
+
+    public void setMelody(View view) {
+        mInstrumentId = Integer.parseInt(view.getTag().toString());
+        Log.d(TAG, Integer.toString(mInstrumentId));
     }
 }
