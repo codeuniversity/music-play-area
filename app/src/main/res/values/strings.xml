@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">WebSocketClient</string>
+    <string name="app_name">Warble</string>
     <string name="enable_nfc_title">Enable NFC</string>
     <string name="enable_nfc_msg">NFC needs to be turned on for this app to run. Please enable NFC now.</string>
     <string name="nfc_settings">Enable</string>
     <string name="close">Close</string>
     <string name="button_text">Freq Up</string>
-    <string name="button_text_freq_up">Freq Up</string>
-    <string name="button_text_freq_down">Freq Down</string>
+    <string name="button_text_freq_up">Down</string>
+    <string name="button_text_freq_down">Up</string>
 </resources>
