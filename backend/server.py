@@ -19,38 +19,37 @@ class SoundClient(object):
     """
     devnull = open(os.devnull, 'w')  # used to discard the output from Popen
     tones_folder = 'tones/'
-    instruments = ['piano', 'guitar', 'drum']
+    instruments = ['Guitar', 'Piano', 'drum']
 
     def __init__(self):
-        self.instrument = None
-        self.melody = None
+        self.instrument = SoundClient.instruments[2]
+        self.melody = 1
         self.interval_seconds = 0.3
 
     def adjustSound(self, data_str):
         json_data = json.loads(data_str)
-        orientation_y = float(json_data['orientation_y'])
         self.instrument = SoundClient.instruments[int(json_data['instrument_id'])]
         self.interval_seconds = 0.3 * int(json_data['freq'])
         print(self.interval_seconds)
+        orientation_y = float(json_data['orientation_y'].replace(',', '.'))
 
-        if orientation_y > 0.3 and orientation_y < 0.6:
+        if 0.3 < orientation_y < 0.6:
             self.melody = 1
-        elif orientation_y > 0.0 and orientation_y < 0.3:
+        elif 0.0 < orientation_y < 0.3:
             self.melody = 2
-        elif orientation_y > -0.3 and orientation_y < -0.0:
+        elif -0.3 < orientation_y < -0.0:
             self.melody = 3
-        elif orientation_y > -0.6 and orientation_y < -0.3:
+        elif -0.6 < orientation_y < -0.3:
             self.melody = 4
-        elif orientation_y > -0.9 and orientation_y < -0.6:
+        elif -0.9 < orientation_y < -0.6:
             self.melody = 5
-        elif orientation_y > -1.2 and orientation_y < -0.9:
+        elif -1.2 < orientation_y < -0.9:
             self.melody = 6
 
     def playSound(self):
-        #pdb.set_trace()
         if self.instrument is None or self.melody is None or self.interval_seconds is None:
             # wait for the instrument and melody to be selected before playing
-            print(self.instrument, self.melody, self.interval_seconds)
+            print('error: ', self.instrument, self.melody, self.interval_seconds)
             return
 
         print(self.instrument, self.melody, self.interval_seconds)
@@ -60,9 +59,7 @@ class SoundClient(object):
               stderr=SoundClient.devnull)
 
     def start(self):
-        #pdb.set_trace()
         self.playSound()
-        #pdb.set_trace()
         t = threading.Timer(self.interval_seconds, self.start)
         t.setDaemon(True)
         t.start()
